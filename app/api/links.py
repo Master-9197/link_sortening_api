@@ -2,20 +2,17 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import RedirectResponse, JSONResponse
 from pydantic import AnyUrl
 
-from ..schemas.links import ShortLink
-from ..services.link_shortening import LinkShorteningService
+from app.schemas.links import ShortLink
+from app.services.link_shortening import LinkShorteningService
 from .dependecies import get_current_user
 
-router = APIRouter(
-    tags=["Сокращение ссылок"]
-)
+router = APIRouter(tags=["Сокращение ссылок"])
 
 
 @router.post("/api/short", status_code=status.HTTP_201_CREATED)
 async def short_link(
-        url: AnyUrl,
-        user_id: int = Depends(get_current_user)
-    ) -> ShortLink:
+    url: AnyUrl, user_id: int = Depends(get_current_user)
+) -> ShortLink:
 
     link = await LinkShorteningService.short_link(url=str(url), user_id=user_id)
     data = {"short_link": link}
